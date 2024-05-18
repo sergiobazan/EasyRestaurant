@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  easyrestaurant.api:
+    image: ${DOCKER_REGISTRY-}easyrestaurantapi
+    build:
+      context: .
+      dockerfile: EasyRestaurant.API/Dockerfile
+    depends_on:
+        - easyrestaurant.database
+
+  easyrestaurant.database:
+    image: postgres:latest
+    container_name: easyrestaurant.database
+    environment:
+        - POSTGRES_DB=easyrestaurant
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+    volumes:
+        - ./.containers/easyrestaurant-db:/var/lib/postgresql/data
+    ports:
+        - 5432:5432
+
