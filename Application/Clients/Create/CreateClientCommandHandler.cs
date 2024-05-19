@@ -1,12 +1,12 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Clients;
 using Domain.Shared;
-using MediatR;
 
 namespace Application.Clients.Create;
 
-public sealed class CreateClientCommandHandler : IRequestHandler<CreateClientCommand, Result<Guid>>
+public sealed class CreateClientCommandHandler : ICommandHandler<CreateClientCommand, Guid>
 {
     private readonly IClientRepository _clientRepository;
     private readonly IUnitOfWork _unitOfWork;

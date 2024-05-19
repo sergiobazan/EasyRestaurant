@@ -1,6 +1,5 @@
-﻿using Domain.Abstractions;
-using MediatR;
+﻿using Application.Abstractions.Messaging;
 
 namespace Application.Clients.Create;
 
-public sealed record CreateClientCommand(CreateClientRequest Client) : IRequest<Result<Guid>>;
+public sealed record CreateClientCommand(CreateClientRequest Client) : ICommand<Guid>;

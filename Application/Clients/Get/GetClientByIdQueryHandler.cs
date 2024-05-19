@@ -1,10 +1,10 @@
-﻿using Domain.Abstractions;
+﻿using Application.Abstractions.Messaging;
+using Domain.Abstractions;
 using Domain.Clients;
-using MediatR;
 
 namespace Application.Clients.Get;
 
-internal class GetClientByIdQueryHandler : IRequestHandler<GetClientByIdQuery, Result<GetClientByIdResponse>>
+internal class GetClientByIdQueryHandler : IQueryHandler<GetClientByIdQuery, GetClientByIdResponse>
 {
     private readonly IClientRepository _clientRepository;
 
