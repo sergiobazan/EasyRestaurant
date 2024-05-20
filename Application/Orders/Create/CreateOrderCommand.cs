@@ -3,4 +3,4 @@
 
 namespace Application.Orders.Create;
 
-public sealed record CreateOrderCommand(Guid ClientId, List<Guid> DishIds) : ICommand<Guid>;
+public sealed record CreateOrderCommand(Guid ClientId, string? Description, List<Guid> DishIds) : ICommand<Guid>;

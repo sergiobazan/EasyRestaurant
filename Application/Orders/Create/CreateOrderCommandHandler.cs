@@ -4,6 +4,7 @@ using Domain.Abstractions;
 using Domain.Clients;
 using Domain.Dishes;
 using Domain.Orders;
+using Domain.Shared;
 
 namespace Application.Orders.Create;
 
@@ -48,7 +49,7 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
             dishes.Add(dish);
         }
 
-        var order = Order.Create(request.ClientId);
+        var order = Order.Create(request.ClientId, new Description(request.Description));
 
         order.Value.AddDishes(dishes);
 
