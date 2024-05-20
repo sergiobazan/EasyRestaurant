@@ -26,7 +26,7 @@ public sealed class Order : Entity
 
     public static Result<Order> Create(Guid clientId)
     {
-        var order = new Order(Guid.NewGuid(), clientId, DateTime.Now, Status.Order);
+        var order = new Order(Guid.NewGuid(), clientId, DateTime.UtcNow, Status.Order);
 
         order.RaiseDomainEvent(new OrderCreatedDomainEvent(order.Id));
 

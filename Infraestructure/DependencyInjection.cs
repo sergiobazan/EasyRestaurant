@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions;
 using Domain.Clients;
+using Domain.Dishes;
+using Domain.Orders;
 using Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +20,8 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IClientRepository, ClientRepository>();
+        services.AddScoped<IDishRepository, DishRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
