@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
 using Domain.Abstractions;
+using Domain.Clients;
 using Domain.Dishes;
 using Domain.Orders;
 
@@ -11,16 +12,25 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDishRepository _dishRepository;
+    private readonly IClientRepository _clientRepository;
 
-    public CreateOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IDishRepository dishRepository)
+    public CreateOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IDishRepository dishRepository, IClientRepository clientRepository)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
         _dishRepository = dishRepository;
+        _clientRepository = clientRepository;
     }
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
+        var client = await _clientRepository.GetAsync(request.ClientId);
+
+        if (client is null)
+        {
+            return Result.Failure<Guid>(ClientErrors.ClientNotFound(request.ClientId));
+        }
+
         List<Dish> dishes = [];
 
         foreach (var dishId in request.DishIds)
