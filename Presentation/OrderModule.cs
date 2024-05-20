@@ -18,7 +18,7 @@ public class OrderModule : ICarterModule
 
             if (result.IsFailure)
             {
-                return Results.BadRequest();
+                return Results.BadRequest(result.Error);
             }
 
             return Results.Created($"orders/{result.Value}", result.Value);

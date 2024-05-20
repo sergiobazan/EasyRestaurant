@@ -39,4 +39,18 @@ public sealed class Dish : Entity
 
         return dish;
     }
+
+    public Result DecreaseQuantity()
+    {
+        var result = Quantity.Decrease();
+
+        if (result.IsFailure)
+        {
+            return Result.Failure(result.Error);
+        }
+
+        Quantity = result.Value;
+
+        return Result.Success();
+    }
 }

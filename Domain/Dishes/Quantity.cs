@@ -16,4 +16,14 @@ public sealed record Quantity
 
         return new Quantity(value);
     }
+
+    public Result<Quantity> Decrease()
+    {
+        if (Value == 0)
+        {
+            return Result.Failure<Quantity>(DishErrors.DishOutOfStock);
+        }
+
+        return new Quantity(Value - 1);
+    }
 }

@@ -21,15 +21,24 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var order = Order.Create(request.ClientId);
-
         List<Dish> dishes = [];
 
         foreach (var dishId in request.DishIds)
         {
             var dish = await _dishRepository.GetAsync(dishId);
-            dishes.Add(dish!);
+            if (dish is null)
+            {
+                return Result.Failure<Guid>(DishErrors.DishNotFound(dishId));
+            }   
+            var decrease = dish.DecreaseQuantity();
+            if (decrease.IsFailure)
+            {
+                return Result.Failure<Guid>(decrease.Error);
+            }
+            dishes.Add(dish);
         }
+
+        var order = Order.Create(request.ClientId);
 
         order.Value.AddDishes(dishes);
 
