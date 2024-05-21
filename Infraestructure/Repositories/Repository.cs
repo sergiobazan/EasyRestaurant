@@ -17,7 +17,7 @@ internal abstract class Repository<TEntity> where TEntity : Entity
         _context.Set<TEntity>().Add(entity);
     }
 
-    public async Task<TEntity?> GetAsync(Guid id)
+    public virtual async Task<TEntity?> GetAsync(Guid id)
     {
         return await _context.Set<TEntity>().FirstOrDefaultAsync(c => c.Id == id);
     }

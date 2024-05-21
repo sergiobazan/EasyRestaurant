@@ -26,4 +26,9 @@ public sealed record Quantity
 
         return new Quantity(Value - 1);
     }
+
+    public Quantity Increase()
+    {
+        return new Quantity(Value + 1);
+    }
 }

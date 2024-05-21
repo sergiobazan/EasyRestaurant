@@ -1,5 +1,5 @@
 ﻿using Domain.Abstractions;
 
-namespace Domain.Orders;
+namespace Domain.Orders.DomainEvents;
 
 public sealed record OrderCreatedDomainEvent(Guid Id) : IDomainEvent;

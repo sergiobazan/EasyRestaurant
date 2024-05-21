@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Abstractions.Messaging;
 
-internal interface ICommandHanlder<TCommand> : IRequestHandler<TCommand, Result>
+internal interface ICommandHandler<TCommand> : IRequestHandler<TCommand, Result>
     where TCommand : ICommand
 { }
 

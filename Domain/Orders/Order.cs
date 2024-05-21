@@ -1,5 +1,6 @@
 ﻿using Domain.Abstractions;
 using Domain.Dishes;
+using Domain.Orders.DomainEvents;
 using Domain.Shared;
 
 namespace Domain.Orders;
@@ -40,5 +41,38 @@ public sealed class Order : Entity
     public void AddDishes(List<Dish> dishes)
     {
         _dishes.AddRange(dishes);
+    }
+
+    public Result OrderServed()
+    {
+        if (Status != Status.Cancel && Status != Status.Delivered)
+        {
+            Status = Status.Delivered;
+
+            RaiseDomainEvent(new OrderServedDomainEvent(Id));
+            
+            return Result.Success();
+        }
+
+        return Result.Failure(OrderErrors.OrderCanNotBeDelivered);
+    }
+
+    public Result OrderCanceled()
+    {
+        if (Status != Status.Cancel && Status != Status.Delivered)
+        {
+            Status = Status.Cancel;
+
+            foreach (var dish in Dishes)
+            {
+                dish.IncreaseQuantity();
+            }
+
+            RaiseDomainEvent(new OrderCanceledDomainEvent(Id));
+
+            return Result.Success();
+        }
+
+        return Result.Failure(OrderErrors.OrderCanNotBeDelivered);
     }
 }

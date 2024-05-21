@@ -1,4 +1,5 @@
 ﻿using Domain.Abstractions;
+using Domain.Dishes.DomainEvents;
 using Domain.Shared;
 
 namespace Domain.Dishes;
@@ -52,5 +53,13 @@ public sealed class Dish : Entity
         Quantity = result.Value;
 
         return Result.Success();
+    }
+
+    public void IncreaseQuantity()
+    {
+        var result = Quantity.Increase();
+
+        Quantity = result;
+
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Domain.Abstractions;
 
-namespace Domain.Dishes;
+namespace Domain.Dishes.DomainEvents;
 
 public sealed record DishCreatedDomainEvent(Guid Id) : IDomainEvent;

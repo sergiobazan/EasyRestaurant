@@ -1,4 +1,6 @@
-﻿using Application.Orders.Create;
+﻿using Application.Orders.Cancel;
+using Application.Orders.Create;
+using Application.Orders.Delivered;
 using Carter;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -22,6 +24,32 @@ public class OrderModule : ICarterModule
             }
 
             return Results.Created($"orders/{result.Value}", result.Value);
+        });
+
+        app.MapPost("/orders/{id:guid}/delivered", async (Guid id, ISender sender) =>
+        {
+            var command = new OrderDeliveredCommand(id);
+            var result = await sender.Send(command);
+
+            if (result.IsFailure)
+            {
+                return Results.BadRequest(result.Error);
+            }
+
+            return Results.Ok();
+        });
+
+        app.MapPost("/orders/{id:guid}/canceled", async (Guid id, ISender sender) =>
+        {
+            var command = new OrderCanceledCommand(id);
+            var result = await sender.Send(command);
+
+            if (result.IsFailure)
+            {
+                return Results.BadRequest(result.Error);
+            }
+
+            return Results.Ok();
         });
     }
 
