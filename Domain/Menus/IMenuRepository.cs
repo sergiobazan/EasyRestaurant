@@ -2,6 +2,6 @@
 
 public interface IMenuRepository
 {
-    Task<List<Menu>> GetMenusAsync();
+    Task<Menu?> GetAsync(Guid id);
     void Add(Menu menu);
 }

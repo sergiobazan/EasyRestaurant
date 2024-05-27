@@ -8,11 +8,14 @@ public static class DishErrors
         "Price.NegativePrice", "Price can not be negative");
 
     public static Error NegativeQuantity => new(
-        "Price.NegativeQuantity", "Quantity can not be negative");
+        "Quantity.NegativeQuantity", "Quantity can not be negative");
 
     public static Error DishNotFound(Guid id) => new(
-        "Price.DishNotFound", $"Dish with Id = {id} was not found.");
+        "Dish.DishNotFound", $"Dish with Id = {id} was not found.");
 
     public static Error DishOutOfStock => new(
-        "Price.DishOutOfStock", "Dish out of stock.");
+        "Dish.DishOutOfStock", "Dish out of stock.");
+
+    public static Error DishesNotFound => new(
+        "Dish.DishesNotFound", "Dishes with given Ids were not found");
 }
