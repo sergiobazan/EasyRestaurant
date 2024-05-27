@@ -32,21 +32,21 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
             return Result.Failure<Guid>(ClientErrors.ClientNotFound(request.ClientId));
         }
 
-        List<Dish> dishes = [];
+        List<Dish> dishes = await _dishRepository.GetByIdsAsync(request.DishIds);
 
-        foreach (var dishId in request.DishIds)
+        if (dishes.Count == 0)
         {
-            var dish = await _dishRepository.GetAsync(dishId);
-            if (dish is null)
-            {
-                return Result.Failure<Guid>(DishErrors.DishNotFound(dishId));
-            }   
+            return Result.Failure<Guid>(DishErrors.DishesNotFound);
+        }
+
+        foreach (var dish in dishes)
+        {  
             var decrease = dish.DecreaseQuantity();
+
             if (decrease.IsFailure)
             {
                 return Result.Failure<Guid>(decrease.Error);
             }
-            dishes.Add(dish);
         }
 
         var order = Order.Create(request.ClientId, new Description(request.Description));
