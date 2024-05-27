@@ -1,6 +1,7 @@
 using Application;
 using Carter;
 using EasyRestaurant.API.Extentions;
+using EasyRestaurant.API.Middlewares;
 using Infraestructure;
 using Presentation;
 
@@ -27,6 +28,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.MapCarter();
 
