@@ -1,5 +1,6 @@
 ﻿using Application.Orders.Cancel;
 using Application.Orders.Change;
+using Application.Orders.ChangePriority;
 using Application.Orders.Create;
 using Application.Orders.Delivered;
 using Carter;
@@ -56,6 +57,19 @@ public class OrderModule : ICarterModule
         app.MapPost("/orders/update", async (ChangeOrderRequest request, ISender sender) =>
         {
             var command = new ChangeOrderCommand(request);
+            var result = await sender.Send(command);
+
+            if (result.IsFailure)
+            {
+                return Results.BadRequest(result.Error);
+            }
+
+            return Results.Ok();
+        });
+
+        app.MapPost("/orders/{id:guid}/priority", async (Guid id, ISender sender) =>
+        {
+            var command = new ChangePriorityCommand(id);
             var result = await sender.Send(command);
 
             if (result.IsFailure)

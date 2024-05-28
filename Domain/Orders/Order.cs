@@ -26,6 +26,7 @@ public sealed class Order : Entity
     public DateTime Date { get; private set; }
     public Status Status { get; private set; }
     public Description? Description { get; private set; }
+    public bool IsPriority { get; private set; } = false;
     private readonly List<Dish> _dishes = new();
     public List<Dish> Dishes => _dishes.ToList();
 
@@ -91,5 +92,10 @@ public sealed class Order : Entity
         _dishes.Add(newDish);
 
         return Result.Success();
+    }
+
+    public void ChangePriority()
+    {
+        IsPriority = true;
     }
 }
