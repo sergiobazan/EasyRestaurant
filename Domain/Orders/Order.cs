@@ -10,18 +10,20 @@ public sealed class Order : Entity
     private Order() { }
     private Order(
         Guid id,
+        Guid menuId,
         Guid clientId,
         DateTime date,
         Status status,
         Description? description)
         : base(id)
     {
+        MenuId = menuId;
         ClientId = clientId;
         Date = date;
         Status = status;
         Description = description;
     }
-
+    public Guid MenuId { get; private set; }
     public Guid ClientId { get; private set; }
     public DateTime Date { get; private set; }
     public Status Status { get; private set; }
@@ -30,9 +32,9 @@ public sealed class Order : Entity
     private readonly List<Dish> _dishes = new();
     public List<Dish> Dishes => _dishes.ToList();
 
-    public static Result<Order> Create(Guid clientId, Description? description)
+    public static Result<Order> Create(Guid clientId, Guid menuId, Description? description)
     {
-        var order = new Order(Guid.NewGuid(), clientId, DateTime.UtcNow, Status.Order, description);
+        var order = new Order(Guid.NewGuid(), menuId, clientId, DateTime.UtcNow, Status.Order, description);
 
         order.RaiseDomainEvent(new OrderCreatedDomainEvent(order.Id));
 

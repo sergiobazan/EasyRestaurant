@@ -1,6 +1,7 @@
 ﻿using Domain.Abstractions;
 using Domain.Dishes;
 using Domain.Menus.DomainEvents;
+using Domain.Orders;
 
 namespace Domain.Menus;
 
@@ -17,7 +18,9 @@ public sealed class Menu : Entity
 
     public DateTime Date { get; private set; }
     private readonly List<Dish> _dishes = new();
-    public List<Dish> Dishes => _dishes.ToList();
+    public readonly List<Order> _orders = new();
+    public IReadOnlyList<Dish> Dishes => _dishes.ToList();
+    public IReadOnlyList<Order> Orders => _orders.ToList();
 
     public static Result<Menu> Create()
     {
@@ -33,5 +36,10 @@ public sealed class Menu : Entity
         _dishes.AddRange(dishes);
 
         return Result.Success();
+    }
+
+    public void AddOrder(Order order)
+    {
+        _orders.Add(order);
     }
 }

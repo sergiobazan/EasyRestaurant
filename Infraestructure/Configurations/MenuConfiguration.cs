@@ -13,5 +13,11 @@ internal class MenuConfiguration : IEntityTypeConfiguration<Menu>
         builder
             .HasMany(m => m.Dishes)
             .WithMany();
+
+        builder
+            .HasMany(menu => menu.Orders)
+            .WithOne()
+            .HasForeignKey(order => order.MenuId)
+            .IsRequired();
     }
 }
