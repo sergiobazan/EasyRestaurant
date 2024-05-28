@@ -17,7 +17,7 @@ public class OrderModule : ICarterModule
     {
         app.MapPost("/orders", async (CreateOrderRequest request, ISender sender) =>
         {
-            var command = new CreateOrderCommand(request.ClientId, request.Description, request.DishIds);
+            var command = new CreateOrderCommand(request.ClientId, request.MenuId, request.Description, request.DishIds);
             var result = await sender.Send(command);
 
             if (result.IsFailure)
@@ -81,5 +81,5 @@ public class OrderModule : ICarterModule
         });
     }
 
-    public sealed record CreateOrderRequest(Guid ClientId, string? Description, List<Guid> DishIds);
+    public sealed record CreateOrderRequest(Guid ClientId, Guid MenuId, string? Description, List<Guid> DishIds);
 }

@@ -19,6 +19,6 @@ internal class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder
             .HasMany(o => o.Dishes)
             .WithMany();
-            
+
     }
 }
