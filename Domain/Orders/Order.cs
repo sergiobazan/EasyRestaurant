@@ -75,4 +75,21 @@ public sealed class Order : Entity
 
         return Result.Failure(OrderErrors.OrderCanNotBeDelivered);
     }
+
+    public Result UpdateDish(Dish oldDish, Dish newDish)
+    {
+        if (!_dishes.Remove(oldDish))
+        {
+            return Result.Failure(DishErrors.DishNotFound(oldDish.Id));
+        }
+
+        if (_dishes.Contains(newDish))
+        {
+            return Result.Failure(DishErrors.DishAlreadyInOrder);
+        }
+
+        _dishes.Add(newDish);
+
+        return Result.Success();
+    }
 }

@@ -18,4 +18,6 @@ public static class DishErrors
 
     public static Error DishesNotFound => new(
         "Dish.DishesNotFound", "Dishes with given Ids were not found");
+    public static Error DishAlreadyInOrder => new(
+       "Dish.DishAlreadyInOrder", "Dish is already in order");
 }
