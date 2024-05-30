@@ -9,6 +9,7 @@ public sealed class Dish : Entity
     private Dish() { }
     private Dish(
         Guid id,
+        Guid menuId,
         Name name,
         Price price,
         Description description,
@@ -17,6 +18,7 @@ public sealed class Dish : Entity
         Status status)
         : base(id)
     {
+        MenuId = menuId;
         Name = name;
         Price = price;
         Description = description;
@@ -25,6 +27,7 @@ public sealed class Dish : Entity
         Status = status;
     }
 
+    public Guid MenuId { get; private set; }
     public Name Name { get; private set; }
     public Price Price { get; private set; }
     public Description Description { get; private set; }
@@ -32,9 +35,9 @@ public sealed class Dish : Entity
     public Type DishType { get; private set; }
     public Status Status { get; private set; }
 
-    public static Result<Dish> Create(Name name, Price price, Description description, Quantity quantity, Type dishType)
+    public static Result<Dish> Create(Guid menuId, Name name, Price price, Description description, Quantity quantity, Type dishType)
     {
-        var dish = new Dish(Guid.NewGuid(), name, price, description, quantity, dishType, Status.Available);
+        var dish = new Dish(Guid.NewGuid(), menuId, name, price, description, quantity, dishType, Status.Available);
 
         dish.RaiseDomainEvent(new DishCreatedDomainEvent(dish.Id));
 
