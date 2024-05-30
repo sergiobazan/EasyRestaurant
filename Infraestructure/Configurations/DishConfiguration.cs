@@ -1,4 +1,5 @@
 ﻿using Domain.Dishes;
+using Domain.Menus;
 using Domain.Shared;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

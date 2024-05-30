@@ -34,6 +34,7 @@ internal class CreateDishCommandHandler : ICommandHandler<CreateDishCommand, Gui
         }
 
         var dish = Dish.Create(
+            request.Dish.MenuId,
             new Name(request.Dish.Name),
             price.Value,
             new Description(request.Dish.Description),
