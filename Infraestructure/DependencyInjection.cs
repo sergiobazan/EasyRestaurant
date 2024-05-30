@@ -3,6 +3,7 @@ using Domain.Clients;
 using Domain.Dishes;
 using Domain.Menus;
 using Domain.Orders;
+using Infraestructure.Interceptors;
 using Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +16,12 @@ public static class DependencyInjection
     public static IServiceCollection AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
     {
 
-        services.AddDbContext<ApplicationDbContext>(opt =>
+        services.AddSingleton<OutboxInterceptor>();
+
+        services.AddDbContext<ApplicationDbContext>((sp, opt) =>
         {
-            opt.UseNpgsql(configuration.GetConnectionString("Database"));
+            opt.UseNpgsql(configuration.GetConnectionString("Database"))
+                .AddInterceptors(sp.GetService<OutboxInterceptor>()!);
         });
 
         services.AddScoped<IClientRepository, ClientRepository>();
