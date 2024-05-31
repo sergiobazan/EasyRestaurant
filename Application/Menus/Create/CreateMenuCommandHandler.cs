@@ -1,8 +1,8 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Messaging;
 using Domain.Abstractions;
-using Domain.Dishes;
 using Domain.Menus;
+using Domain.Shared;
 
 namespace Application.Menus.Create;
 
@@ -10,27 +10,25 @@ internal class CreateMenuCommandHandler : ICommandHandler<CreateMenuCommand, Gui
 {
     private readonly IMenuRepository _menuRepository;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IDishRepository _dishRepository;
 
-    public CreateMenuCommandHandler(IMenuRepository menuRepository, IUnitOfWork unitOfWork, IDishRepository dishRepository)
+    public CreateMenuCommandHandler(IMenuRepository menuRepository, IUnitOfWork unitOfWork)
     {
         _menuRepository = menuRepository;
         _unitOfWork = unitOfWork;
-        _dishRepository = dishRepository;
     }
 
     public async Task<Result<Guid>> Handle(CreateMenuCommand request, CancellationToken cancellationToken)
     {
-        List<Dish> dishes = await _dishRepository.GetByIdsAsync(request.DishIds);
+        var menuDate = MenuDate.Create(request.Menu.Date);
 
-        if (dishes.Count == 0)
+        if (menuDate.IsFailure)
         {
-            return Result.Failure<Guid>(DishErrors.DishesNotFound);
+            return Result.Failure<Guid>(menuDate.Error);
         }
 
-        var result = Menu.Create();
-
-        result.Value.AddDishes(dishes);
+        var result = Menu.Create(
+            new Name(request.Menu.Name),
+            menuDate.Value);
 
         _menuRepository.Add(result.Value);
 
