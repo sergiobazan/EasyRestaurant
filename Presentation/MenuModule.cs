@@ -14,7 +14,7 @@ public class MenuModule : ICarterModule
     {
         app.MapPost("menus", async (CreateMenuRequest request, ISender sender) =>
         {
-            var command = new CreateMenuCommand(request.DishIds);
+            var command = new CreateMenuCommand(request);
             var result = await sender.Send(command);
 
             return result.IsSuccess ? Results.Created($"menus/{result.Value}", result.Value) : Results.BadRequest(result.Error); 
@@ -28,6 +28,4 @@ public class MenuModule : ICarterModule
             return result.IsSuccess ? Results.Ok(result.Value) : Results.NotFound(result.Error);
         });
     }
-
-    public sealed record CreateMenuRequest(List<Guid> DishIds);
 }

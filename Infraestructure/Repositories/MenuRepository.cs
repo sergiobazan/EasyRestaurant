@@ -11,7 +11,7 @@ internal class MenuRepository : Repository<Menu>, IMenuRepository
     {
     }
 
-    public async Task<List<MenuOrder>> GetOrdersAsync(Guid id)
+    public async Task<MenuOrder?> GetOrdersAsync(Guid id)
     {
         return await _context.Set<Menu>()
             .AsNoTracking()
@@ -21,7 +21,7 @@ internal class MenuRepository : Repository<Menu>, IMenuRepository
             .Where(menu => menu.Id == id)
             .Select(menu => new MenuOrder(
                 menu.Id,
-                menu.Date,
+                menu.Date.Value,
                 menu.Orders
                     .OrderByDescending(o => o.IsPriority)
                     .ThenBy(o => o.Date)
@@ -43,6 +43,6 @@ internal class MenuRepository : Repository<Menu>, IMenuRepository
                                 dish.Status))
                         ))
                 ))
-            .ToListAsync();
+            .FirstOrDefaultAsync();
     }
 }

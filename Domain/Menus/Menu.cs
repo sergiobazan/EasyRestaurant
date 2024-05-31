@@ -2,6 +2,7 @@
 using Domain.Dishes;
 using Domain.Menus.DomainEvents;
 using Domain.Orders;
+using Domain.Shared;
 
 namespace Domain.Menus;
 
@@ -11,29 +12,34 @@ public sealed class Menu : Entity
     {
     }
 
-    private Menu(Guid id, DateTime date) : base(id)
+    private Menu(
+        Guid id, 
+        Name name,
+        MenuDate date) 
+        : base(id)
     {
+        Name = name;
         Date = date;
     }
-
-    public DateTime Date { get; private set; }
+    public Name Name { get; private set; }
+    public MenuDate Date { get; private set; }
     private readonly List<Dish> _dishes = new();
     public readonly List<Order> _orders = new();
     public IReadOnlyList<Dish> Dishes => _dishes.ToList();
     public IReadOnlyList<Order> Orders => _orders.ToList();
 
-    public static Result<Menu> Create()
+    public static Result<Menu> Create(Name name, MenuDate date)
     {
-        var menu = new Menu(Guid.NewGuid(), DateTime.UtcNow);
+        var menu = new Menu(Guid.NewGuid(), name, date);
 
         menu.RaiseDomainEvent(new MenuCreatedDomainEvent(menu.Id));
 
         return menu;
     }
 
-    public Result AddDishes(List<Dish> dishes)
+    public Result AddDish(Dish dish)
     {
-        _dishes.AddRange(dishes);
+        _dishes.Add(dish);
 
         return Result.Success();
     }

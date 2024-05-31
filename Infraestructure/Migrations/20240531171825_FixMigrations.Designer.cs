@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infraestructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240520215424_AddOrderDescription")]
-    partial class AddOrderDescription
+    [Migration("20240531171825_FixMigrations")]
+    partial class FixMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace Infraestructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("DishMenu", b =>
-                {
-                    b.Property<Guid>("DishesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("MenuId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("DishesId", "MenuId");
-
-                    b.HasIndex("MenuId");
-
-                    b.ToTable("DishMenu");
-                });
 
             modelBuilder.Entity("DishOrder", b =>
                 {
@@ -90,6 +75,9 @@ namespace Infraestructure.Migrations
                     b.Property<int>("DishType")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("MenuId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -106,6 +94,8 @@ namespace Infraestructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MenuId");
+
                     b.ToTable("Dish");
                 });
 
@@ -117,6 +107,10 @@ namespace Infraestructure.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -140,6 +134,12 @@ namespace Infraestructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsPriority")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("MenuId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -149,22 +149,37 @@ namespace Infraestructure.Migrations
 
                     b.HasIndex("Id");
 
+                    b.HasIndex("MenuId");
+
                     b.ToTable("Order");
                 });
 
-            modelBuilder.Entity("DishMenu", b =>
+            modelBuilder.Entity("Infraestructure.Outbox.OutboxMessage", b =>
                 {
-                    b.HasOne("Domain.Dishes.Dish", null)
-                        .WithMany()
-                        .HasForeignKey("DishesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
-                    b.HasOne("Domain.Menus.Menu", null)
-                        .WithMany()
-                        .HasForeignKey("MenuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Error")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("OccurredOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ProcessOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OutboxMessage");
                 });
 
             modelBuilder.Entity("DishOrder", b =>
@@ -211,6 +226,15 @@ namespace Infraestructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Dishes.Dish", b =>
+                {
+                    b.HasOne("Domain.Menus.Menu", null)
+                        .WithMany("Dishes")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Orders.Order", b =>
                 {
                     b.HasOne("Domain.Clients.Client", null)
@@ -218,6 +242,19 @@ namespace Infraestructure.Migrations
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Domain.Menus.Menu", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Menus.Menu", b =>
+                {
+                    b.Navigation("Dishes");
+
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

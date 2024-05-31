@@ -2,6 +2,7 @@
 using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Dishes;
+using Domain.Menus;
 using Domain.Shared;
 
 namespace Application.Dishes.Create;
@@ -9,16 +10,25 @@ namespace Application.Dishes.Create;
 internal class CreateDishCommandHandler : ICommandHandler<CreateDishCommand, Guid>
 {
     private readonly IDishRepository _dishRepository;
+    private readonly IMenuRepository _menuRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateDishCommandHandler(IDishRepository dishRepository, IUnitOfWork unitOfWork)
+    public CreateDishCommandHandler(IDishRepository dishRepository, IUnitOfWork unitOfWork, IMenuRepository menuRepository)
     {
         _dishRepository = dishRepository;
         _unitOfWork = unitOfWork;
+        _menuRepository = menuRepository;
     }
 
     public async Task<Result<Guid>> Handle(CreateDishCommand request, CancellationToken cancellationToken)
     {
+        var menu = await _menuRepository.GetAsync(request.Dish.MenuId);
+
+        if (menu is null)
+        {
+            return Result.Failure<Guid>(MenuErrors.MenuNotFound(request.Dish.MenuId));
+        }
+
         var price = Price.Create(request.Dish.Price);
 
         if (price.IsFailure)
@@ -40,6 +50,8 @@ internal class CreateDishCommandHandler : ICommandHandler<CreateDishCommand, Gui
             new Description(request.Dish.Description),
             quantity.Value,
             request.Dish.Type);
+
+        menu.AddDish(dish.Value);
 
         _dishRepository.Add(dish.Value);
 

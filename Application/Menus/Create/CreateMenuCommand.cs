@@ -2,4 +2,4 @@
 
 namespace Application.Menus.Create;
 
-public sealed record CreateMenuCommand(List<Guid> DishIds) : ICommand<Guid>;
+public sealed record CreateMenuCommand(CreateMenuRequest Menu) : ICommand<Guid>;

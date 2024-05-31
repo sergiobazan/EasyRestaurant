@@ -5,7 +5,7 @@ using Domain.Menus.Responses;
 
 namespace Application.Menus.GetOrders;
 
-public class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List<MenuOrder>>
+public class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, MenuOrder>
 {
     private readonly IMenuRepository _menuRepository;
 
@@ -14,8 +14,15 @@ public class GetOrdersQueryHandler : IQueryHandler<GetOrdersQuery, List<MenuOrde
         _menuRepository = menuRepository;
     }
 
-    public async Task<Result<List<MenuOrder>>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<Result<MenuOrder>> Handle(GetOrdersQuery request, CancellationToken cancellationToken)
     {
-        return await _menuRepository.GetOrdersAsync(request.MenuId);
+        MenuOrder? menu = await _menuRepository.GetOrdersAsync(request.MenuId);
+
+        if (menu is null)
+        {
+            return Result.Failure<MenuOrder>(MenuErrors.MenuNotFound(request.MenuId));
+        }
+
+        return menu;
     }
 }
