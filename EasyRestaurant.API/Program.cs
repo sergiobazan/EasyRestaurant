@@ -17,7 +17,6 @@ builder.Services
     .AddInfraestructure(builder.Configuration)
     .AddPresentation();
 
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

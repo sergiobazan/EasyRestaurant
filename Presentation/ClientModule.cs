@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Builder;
 using Application.Clients.Get;
 using Application.Clients.GetOrders;
+using Application.Clients.Update;
 
 namespace Presentation;
 
@@ -35,6 +36,19 @@ public class ClientModule : ICarterModule
             if (result.IsFailure)
             {
                 return Results.NotFound(result.Error);
+            }
+
+            return Results.Ok(result.Value);
+        });
+
+        app.MapPut("/clients/{id:guid}", async (Guid id, UpdateClientRequest request, ISender sender) =>
+        {
+            var query = new UpdateClientCommand(id, request);
+            var result = await sender.Send(query);
+
+            if (result.IsFailure)
+            {
+                return Results.BadRequest(result.Error);
             }
 
             return Results.Ok(result.Value);

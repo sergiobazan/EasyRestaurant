@@ -31,4 +31,12 @@ public sealed class Client : Entity
         return client;
     }
 
+    public Result<Client> Update(Name name, Phone phone)
+    {
+        Name = name;
+        Phone = phone;
+
+        return this;
+    }
+
 }

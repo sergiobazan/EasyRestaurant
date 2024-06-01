@@ -42,6 +42,11 @@ public static class DependencyInjection
 
         services.AddQuartzHostedService();
 
+        services.AddStackExchangeRedisCache(conf =>
+        {
+            conf.Configuration = configuration.GetConnectionString("Redis");
+        });
+
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IDishRepository, DishRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
