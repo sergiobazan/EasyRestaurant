@@ -19,6 +19,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IEmailService, EmailService>();
+        services.AddSingleton<ICacheService, CacheService>();
 
         services.AddSingleton<OutboxInterceptor>();
 
@@ -26,6 +27,11 @@ public static class DependencyInjection
         {
             opt.UseNpgsql(configuration.GetConnectionString("Database"))
                 .AddInterceptors(sp.GetService<OutboxInterceptor>()!);
+        });
+
+        services.AddStackExchangeRedisCache(configure =>
+        {
+            configure.Configuration = configuration.GetConnectionString("Redis");
         });
 
         services.AddQuartz(configure =>

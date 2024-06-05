@@ -6,6 +6,7 @@ using Domain.Dishes;
 using Domain.Menus;
 using Domain.Orders;
 using Domain.Shared;
+using MediatR;
 
 namespace Application.Orders.Create;
 
@@ -16,19 +17,22 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
     private readonly IDishRepository _dishRepository;
     private readonly IClientRepository _clientRepository;
     private readonly IMenuRepository _menuRepository;
+    private readonly IPublisher _publisher;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
         IUnitOfWork unitOfWork,
         IDishRepository dishRepository,
         IClientRepository clientRepository,
-        IMenuRepository menuRepository)
+        IMenuRepository menuRepository,
+        IPublisher publisher)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
         _dishRepository = dishRepository;
         _clientRepository = clientRepository;
         _menuRepository = menuRepository;
+        _publisher = publisher;
     }
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -73,6 +77,10 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
         menu.AddOrder(order.Value);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _publisher.Publish(
+            new OrderCreatedEvent(client.Id),
+            cancellationToken);
 
         return order.Value.Id;
     }

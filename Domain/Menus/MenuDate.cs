@@ -8,11 +8,6 @@ public sealed record MenuDate
     private MenuDate(DateTime value) => Value = value;
     public static Result<MenuDate> Create(DateTime value)
     {
-        if (value < DateTime.UtcNow)
-        {
-            return Result.Failure<MenuDate>(MenuErrors.MenuDateCantBeEarlyThanToday);
-        }
-
         return new MenuDate(value);
     }
 }

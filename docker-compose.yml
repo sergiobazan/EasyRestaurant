@@ -21,3 +21,10 @@ services:
     ports:
         - 5432:5432
 
+  easyrestaurant.cache:
+    image: redis
+    container_name: easyrestaurant.cache
+    volumes:
+        - ./.containers/easyrestaurant-cache:/data
+    ports:
+        - 6379:6379
