@@ -9,15 +9,16 @@ namespace Infraestructure.Services;
 public class CacheService : ICacheService
 {
     private readonly IDistributedCache _distributedCache;
-    private static readonly ConcurrentDictionary<string, bool> CacheKeys = new();
+    private readonly ConcurrentDictionary<string, bool> CacheKeys;
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
         ContractResolver = new PrivateConstructorContractResolver()
     };
 
-    public CacheService(IDistributedCache distributedCache)
+    public CacheService(IDistributedCache distributedCache, ConcurrentDictionary<string, bool> cacheKeys)
     {
         _distributedCache = distributedCache;
+        CacheKeys = cacheKeys;
     }
 
     public async Task<T?> GetAsync<T>(string key, CancellationToken cancellationToken = default) where T : class
@@ -76,6 +77,6 @@ public class CacheService : ICacheService
             .Where(k => k.Contains(partialKey))
             .Select(k => RemoveAsync(k, cancellationToken));
 
-        await Task.WhenAll(tasks);
+        await Task.WhenAll(tasks);   
     }
 }
