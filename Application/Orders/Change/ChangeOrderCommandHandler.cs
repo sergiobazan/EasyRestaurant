@@ -3,6 +3,7 @@ using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Dishes;
 using Domain.Orders;
+using MediatR;
 
 namespace Application.Orders.Change;
 
@@ -11,12 +12,14 @@ public class ChangeOrderCommandHandler : ICommandHandler<ChangeOrderCommand, Gui
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDishRepository _dishRepository;
+    private readonly IPublisher _publisher;
 
-    public ChangeOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IDishRepository dishRepository)
+    public ChangeOrderCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IDishRepository dishRepository, IPublisher publisher)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
         _dishRepository = dishRepository;
+        _publisher = publisher;
     }
 
     public async Task<Result<Guid>> Handle(ChangeOrderCommand request, CancellationToken cancellationToken)
@@ -50,6 +53,10 @@ public class ChangeOrderCommandHandler : ICommandHandler<ChangeOrderCommand, Gui
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _publisher.Publish(
+            new OrderChangedEvent(order.Id),
+            cancellationToken);
 
         return order.Id;
     }

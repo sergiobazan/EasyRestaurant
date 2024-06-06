@@ -2,6 +2,7 @@
 using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Orders;
+using MediatR;
 
 namespace Application.Orders.ChangePriority;
 
@@ -9,11 +10,13 @@ internal class ChangePriorityCommandHandler : ICommandHandler<ChangePriorityComm
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPublisher _publisher;
 
-    public ChangePriorityCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
+    public ChangePriorityCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IPublisher publisher)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
+        _publisher = publisher;
     }
 
     public async Task<Result> Handle(ChangePriorityCommand request, CancellationToken cancellationToken)
@@ -28,6 +31,10 @@ internal class ChangePriorityCommandHandler : ICommandHandler<ChangePriorityComm
         order.ChangePriority();
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _publisher.Publish(
+            new OrderPriorityChangedEvent(order.Id),
+            cancellationToken);
 
         return Result.Success();
     }

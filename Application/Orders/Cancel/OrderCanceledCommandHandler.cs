@@ -2,6 +2,7 @@
 using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Orders;
+using MediatR;
 
 namespace Application.Orders.Cancel;
 
@@ -9,11 +10,13 @@ internal class OrderCanceledCommandHandler : ICommandHandler<OrderCanceledComman
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IPublisher _publisher;
 
-    public OrderCanceledCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork)
+    public OrderCanceledCommandHandler(IOrderRepository orderRepository, IUnitOfWork unitOfWork, IPublisher publisher)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
+        _publisher = publisher;
     }
 
     public async Task<Result> Handle(OrderCanceledCommand request, CancellationToken cancellationToken)
@@ -33,6 +36,10 @@ internal class OrderCanceledCommandHandler : ICommandHandler<OrderCanceledComman
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        await _publisher.Publish(
+            new OrderCanceledEvent(order.Id),
+            cancellationToken);
 
         return Result.Success();
     }

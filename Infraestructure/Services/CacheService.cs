@@ -2,12 +2,14 @@
 using Infraestructure.Resolvers;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace Infraestructure.Services;
 
 public class CacheService : ICacheService
 {
     private readonly IDistributedCache _distributedCache;
+    private static readonly ConcurrentDictionary<string, bool> CacheKeys = new();
     private static readonly JsonSerializerSettings SerializerSettings = new()
     {
         ContractResolver = new PrivateConstructorContractResolver()
@@ -50,10 +52,30 @@ public class CacheService : ICacheService
     public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
     {
         await _distributedCache.RemoveAsync(key, cancellationToken);
+
+        CacheKeys.TryRemove(key, out _);
     }
 
     public async Task SetAsync<T>(string key, T value, CancellationToken cancellationToken = default) where T : class
     {
-        await _distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(value), cancellationToken);
+        await _distributedCache.SetStringAsync(
+            key, 
+            JsonConvert.SerializeObject(value),
+            new DistributedCacheEntryOptions()
+            {
+                AbsoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(10),
+            },
+            cancellationToken);
+
+        CacheKeys.TryAdd(key, false);
+    }
+
+    public async Task RemoveByPartialKey(string partialKey, CancellationToken cancellationToken = default)
+    {
+        IEnumerable<Task> tasks = CacheKeys.Keys
+            .Where(k => k.Contains(partialKey))
+            .Select(k => RemoveAsync(k, cancellationToken));
+
+        await Task.WhenAll(tasks);
     }
 }
