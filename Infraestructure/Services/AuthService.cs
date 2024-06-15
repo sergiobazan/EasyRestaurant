@@ -48,9 +48,9 @@ internal class AuthService : IAuthService
     {
         List<Claim> claims = new()
         {
-            new Claim(ClaimTypes.NameIdentifier, client.Id.ToString()),
-            new Claim(ClaimTypes.Gender, client.Gender.Value),
-            new(ClaimTypes.Name, client.Name.Value),
+            new(JwtRegisteredClaimNames.Sub, client.Id.ToString()),
+            new(JwtRegisteredClaimNames.Gender, client.Gender.Value),
+            new(JwtRegisteredClaimNames.Name, client.Name.Value),
             new(ClaimTypes.MobilePhone, client.Phone.Value)
         };
 

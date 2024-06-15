@@ -7,10 +7,6 @@ using Microsoft.AspNetCore.Builder;
 using Application.Clients.Get;
 using Application.Clients.GetOrders;
 using Application.Clients.Login;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
-using Domain.Shared;
 
 namespace Presentation;
 
