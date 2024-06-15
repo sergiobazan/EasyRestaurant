@@ -2,7 +2,9 @@ using Application;
 using Carter;
 using EasyRestaurant.API.Extentions;
 using EasyRestaurant.API.Middlewares;
+using EasyRestaurant.API.OptionsSetup;
 using Infraestructure;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,12 @@ builder.Services
     .AddInfraestructure(builder.Configuration)
     .AddPresentation();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
+builder.Services.AddAuthorization();
+
+builder.Services.ConfigureOptions<JwtOptionsSetup>();
+builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
 
 var app = builder.Build();
 

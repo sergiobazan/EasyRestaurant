@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Authentication;
 using Domain.Clients;
 using Domain.Dishes;
 using Domain.Menus;
@@ -47,6 +48,8 @@ public static class DependencyInjection
         });
 
         services.AddQuartzHostedService();
+
+        services.AddScoped<IAuthService, AuthService>();
 
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IDishRepository, DishRepository>();

@@ -13,6 +13,10 @@ internal class ClientRepository : Repository<Client>, IClientRepository
     {
         _cacheService = cacheService;
     }
+    public async Task<Client?> GetByPhoneAsync(Phone phone)
+    {
+        return await _context.Set<Client>().FirstOrDefaultAsync(c => c.Phone.Prefix == phone.Prefix && c.Phone.Value == phone.Value);
+    }
 
     public async Task<List<ClientOrderResponse>> GetOrdersAsync(Guid id)
     {
