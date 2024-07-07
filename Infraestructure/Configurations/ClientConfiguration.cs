@@ -20,6 +20,12 @@ internal class ClientConfiguration : IEntityTypeConfiguration<Client>
                 value => new Name(value))
             .HasMaxLength(256);
 
+        builder.Property(client => client.Email)
+            .HasConversion(
+                email => email.Value,
+                value => new Email(value))
+            .HasMaxLength(256);
+
         builder.OwnsOne(client => client.Phone, phoneBuilder =>
         {
             phoneBuilder.Property(p => p.Prefix).HasMaxLength(3);
@@ -37,5 +43,7 @@ internal class ClientConfiguration : IEntityTypeConfiguration<Client>
             .WithOne()
             .HasForeignKey(order => order.ClientId)
             .IsRequired();
+
+        builder.HasIndex(client => client.Email).IsUnique();
     }
 }

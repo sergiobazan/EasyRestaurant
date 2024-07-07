@@ -34,6 +34,7 @@ public sealed class CreateClientCommandHandler : ICommandHandler<CreateClientCom
         }
 
         var client = Client.Create(
+            new Email(request.Client.Email),
             new Name(request.Client.Name), 
             phone.Value,
             gender.Value);
