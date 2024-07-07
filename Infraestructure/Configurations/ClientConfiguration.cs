@@ -45,5 +45,7 @@ internal class ClientConfiguration : IEntityTypeConfiguration<Client>
             .IsRequired();
 
         builder.HasIndex(client => client.Email).IsUnique();
+
+        builder.HasIndex(client => client.IdentityId).IsUnique();
     }
 }

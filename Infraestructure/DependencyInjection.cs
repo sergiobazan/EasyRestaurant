@@ -1,8 +1,12 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Authentication;
 using Domain.Clients;
 using Domain.Dishes;
 using Domain.Menus;
 using Domain.Orders;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Infraestructure.Authentication;
 using Infraestructure.BackgroundJobs;
 using Infraestructure.Interceptors;
 using Infraestructure.Repositories;
@@ -54,6 +58,13 @@ public static class DependencyInjection
         services.AddScoped<IMenuRepository, MenuRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
+
+        services.AddSingleton<IIdentityUser, IdentityUser>();
+
+        FirebaseApp.Create(new AppOptions()
+        {
+            Credential = GoogleCredential.FromFile("firebase.json")
+        });
 
         return services;
     }
