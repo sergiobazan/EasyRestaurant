@@ -3,10 +3,12 @@ using Domain.Clients;
 using Domain.Dishes;
 using Domain.Menus;
 using Domain.Orders;
+using Infraestructure.Authentication;
 using Infraestructure.BackgroundJobs;
 using Infraestructure.Interceptors;
 using Infraestructure.Repositories;
 using Infraestructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,6 +56,13 @@ public static class DependencyInjection
         services.AddScoped<IMenuRepository, MenuRepository>();
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer();
+        services.AddAuthorization();
+
+        services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
+        services.ConfigureOptions<JwtBearerOptionsSetup>();
 
         return services;
     }
