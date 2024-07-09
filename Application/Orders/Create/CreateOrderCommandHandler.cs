@@ -18,6 +18,7 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
     private readonly IClientRepository _clientRepository;
     private readonly IMenuRepository _menuRepository;
     private readonly IPublisher _publisher;
+    private readonly PricingService _pricingService;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
@@ -25,7 +26,8 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
         IDishRepository dishRepository,
         IClientRepository clientRepository,
         IMenuRepository menuRepository,
-        IPublisher publisher)
+        IPublisher publisher,
+        PricingService pricingService)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
@@ -33,6 +35,7 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
         _clientRepository = clientRepository;
         _menuRepository = menuRepository;
         _publisher = publisher;
+        _pricingService = pricingService;
     }
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -68,9 +71,12 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
             }
         }
 
-        var order = Order.Create(request.ClientId, request.MenuId, new Description(request.Description));
-
-        order.Value.AddDishes(dishes);
+        var order = Order.Create(
+            request.ClientId, 
+            request.MenuId, 
+            new Description(request.Description),
+            dishes,
+            _pricingService);
 
         _orderRepository.Add(order.Value);
 

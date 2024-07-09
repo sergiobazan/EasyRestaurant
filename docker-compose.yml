@@ -24,6 +24,7 @@ services:
   easyrestaurant.cache:
     image: redis
     container_name: easyrestaurant.cache
+    restart: always
     volumes:
         - ./.containers/easyrestaurant-cache:/data
     ports:

@@ -16,6 +16,11 @@ internal class OrderConfiguration : IEntityTypeConfiguration<Order>
                 description => description!.Value,
                 value => new Description(value));
 
+        builder.Property(o => o.TotalPrice)
+            .HasConversion(
+                price => price.Amount,
+                amount => Price.Create(amount).Value);
+
         builder
             .HasMany(o => o.Dishes)
             .WithMany();

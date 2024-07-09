@@ -10,6 +10,7 @@ public sealed record GetClientOrdersResponse(
 public sealed record ClientOrderResponse(
     Guid OrderId,
     Guid ClientId,
+    decimal TotalPrice,
     DateTime Date,
     Status Status,
     List<ClientOrderDishes> Dishes);
