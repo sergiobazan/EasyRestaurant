@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infraestructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240707212547_add_identityId_client")]
-    partial class add_identityId_client
+    [Migration("20240709230128_Create_Database")]
+    partial class Create_Database
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -129,8 +129,6 @@ namespace Infraestructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.ToTable("Menu");
                 });
 
@@ -158,11 +156,12 @@ namespace Infraestructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
-
-                    b.HasIndex("Id");
 
                     b.HasIndex("MenuId");
 

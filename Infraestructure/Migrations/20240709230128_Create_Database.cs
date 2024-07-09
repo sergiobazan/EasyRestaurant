@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infraestructure.Migrations
 {
     /// <inheritdoc />
-    public partial class FixMigrations : Migration
+    public partial class Create_Database : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,9 @@ namespace Infraestructure.Migrations
                     Name = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Phone_Prefix = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
                     Phone_Value = table.Column<string>(type: "character varying(9)", maxLength: 9, nullable: false),
-                    Gender = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false)
+                    Gender = table.Column<string>(type: "character varying(1)", maxLength: 1, nullable: false),
+                    IdentityId = table.Column<string>(type: "text", nullable: false),
+                    Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -89,7 +91,8 @@ namespace Infraestructure.Migrations
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    IsPriority = table.Column<bool>(type: "boolean", nullable: false)
+                    IsPriority = table.Column<bool>(type: "boolean", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,6 +136,18 @@ namespace Infraestructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Client_Email",
+                table: "Client",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Client_IdentityId",
+                table: "Client",
+                column: "IdentityId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Dish_MenuId",
                 table: "Dish",
                 column: "MenuId");
@@ -143,19 +158,9 @@ namespace Infraestructure.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Menu_Id",
-                table: "Menu",
-                column: "Id");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Order_ClientId",
                 table: "Order",
                 column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Order_Id",
-                table: "Order",
-                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Order_MenuId",

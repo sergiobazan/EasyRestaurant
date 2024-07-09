@@ -42,6 +42,7 @@ public sealed class Order : Entity
         Guid clientId, 
         Guid menuId, 
         Description? description,
+        DateTime date,
         List<Dish> dishes,
         PricingService pricingService)
     {
@@ -52,7 +53,7 @@ public sealed class Order : Entity
             menuId, 
             clientId, 
             dishes,
-            DateTime.UtcNow, 
+            date, 
             Status.Order, 
             description, 
             pricingDetails.TotalPrice);

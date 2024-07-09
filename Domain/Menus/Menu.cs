@@ -11,24 +11,23 @@ public sealed class Menu : Entity
     private Menu()
     {
     }
-
     private Menu(
         Guid id, 
         Name name,
-        MenuDate date) 
+        DateTime date) 
         : base(id)
     {
         Name = name;
         Date = date;
     }
     public Name Name { get; private set; }
-    public MenuDate Date { get; private set; }
+    public DateTime Date { get; private set; }
     private readonly List<Dish> _dishes = new();
     public readonly List<Order> _orders = new();
     public IReadOnlyList<Dish> Dishes => _dishes.ToList();
     public IReadOnlyList<Order> Orders => _orders.ToList();
 
-    public static Result<Menu> Create(Name name, MenuDate date)
+    public static Result<Menu> Create(Name name, DateTime date)
     {
         var menu = new Menu(Guid.NewGuid(), name, date);
 

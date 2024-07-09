@@ -9,17 +9,12 @@ internal class MenuConfiguration : IEntityTypeConfiguration<Menu>
 {
     public void Configure(EntityTypeBuilder<Menu> builder)
     {
-        builder.HasIndex(m => m.Id);
+        builder.HasKey(m => m.Id);
 
         builder.Property(m => m.Name)
             .HasConversion(
                 name => name.Value,
                 value => new Name(value));
-
-        builder.Property(m => m.Date)
-            .HasConversion(
-                date => date.Value,
-                value => MenuDate.Create(value).Value);
 
         builder
             .HasMany(menu => menu.Orders)

@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Clock;
 using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Clients;
@@ -19,6 +20,7 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
     private readonly IMenuRepository _menuRepository;
     private readonly IPublisher _publisher;
     private readonly PricingService _pricingService;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
     public CreateOrderCommandHandler(
         IOrderRepository orderRepository,
@@ -27,7 +29,8 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
         IClientRepository clientRepository,
         IMenuRepository menuRepository,
         IPublisher publisher,
-        PricingService pricingService)
+        PricingService pricingService,
+        IDateTimeProvider dateTimeProvider)
     {
         _orderRepository = orderRepository;
         _unitOfWork = unitOfWork;
@@ -36,6 +39,7 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
         _menuRepository = menuRepository;
         _publisher = publisher;
         _pricingService = pricingService;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<Result<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
@@ -75,6 +79,7 @@ internal class CreateOrderCommandHandler : ICommandHandler<CreateOrderCommand, G
             request.ClientId, 
             request.MenuId, 
             new Description(request.Description),
+            _dateTimeProvider.UtcNow,
             dishes,
             _pricingService);
 

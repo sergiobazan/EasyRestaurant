@@ -126,8 +126,6 @@ namespace Infraestructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Id");
-
                     b.ToTable("Menu");
                 });
 
@@ -161,8 +159,6 @@ namespace Infraestructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClientId");
-
-                    b.HasIndex("Id");
 
                     b.HasIndex("MenuId");
 

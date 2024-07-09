@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions;
 using Application.Abstractions.Authentication;
+using Application.Abstractions.Clock;
 using Domain.Clients;
 using Domain.Dishes;
 using Domain.Menus;
@@ -24,6 +25,8 @@ public static class DependencyInjection
     public static IServiceCollection AddInfraestructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IEmailService, EmailService>();
+
+        services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 
         AddPersistence(services, configuration);
 

@@ -29,7 +29,7 @@ internal class MenuRepository : Repository<Menu>, IMenuRepository
                    .Where(menu => menu.Id == id)
                    .Select(menu => new MenuOrder(
                        menu.Id,
-                       menu.Date.Value,
+                       menu.Date,
                        menu.Orders
                            .OrderByDescending(o => o.IsPriority)
                            .ThenBy(o => o.Date)

@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions;
+using Application.Abstractions.Clock;
 using Application.Abstractions.Messaging;
 using Domain.Abstractions;
 using Domain.Menus;
@@ -10,25 +11,22 @@ internal class CreateMenuCommandHandler : ICommandHandler<CreateMenuCommand, Gui
 {
     private readonly IMenuRepository _menuRepository;
     private readonly IUnitOfWork _unitOfWork;
-
-    public CreateMenuCommandHandler(IMenuRepository menuRepository, IUnitOfWork unitOfWork)
+    private readonly IDateTimeProvider _dateTimeProvider;
+    public CreateMenuCommandHandler(
+        IMenuRepository menuRepository,
+        IUnitOfWork unitOfWork,
+        IDateTimeProvider dateTimeProvider)
     {
         _menuRepository = menuRepository;
         _unitOfWork = unitOfWork;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public async Task<Result<Guid>> Handle(CreateMenuCommand request, CancellationToken cancellationToken)
     {
-        var menuDate = MenuDate.Create(request.Menu.Date);
-
-        if (menuDate.IsFailure)
-        {
-            return Result.Failure<Guid>(menuDate.Error);
-        }
-
         var result = Menu.Create(
             new Name(request.Menu.Name),
-            menuDate.Value);
+            _dateTimeProvider.UtcNow);
 
         _menuRepository.Add(result.Value);
 
