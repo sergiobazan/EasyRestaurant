@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Behaviors;
+using Domain.Orders;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,8 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssembly(assembly);
+
+        services.AddTransient<PricingService>();
 
         return services;
     }

@@ -12,16 +12,20 @@ public sealed class Order : Entity
         Guid id,
         Guid menuId,
         Guid clientId,
+        List<Dish> dishes,
         DateTime date,
         Status status,
-        Description? description)
+        Description? description,
+        Price totalPrice)
         : base(id)
     {
         MenuId = menuId;
         ClientId = clientId;
+        _dishes = dishes;
         Date = date;
         Status = status;
         Description = description;
+        TotalPrice = totalPrice;
     }
     public Guid MenuId { get; private set; }
     public Guid ClientId { get; private set; }
@@ -29,12 +33,29 @@ public sealed class Order : Entity
     public Status Status { get; private set; }
     public Description? Description { get; private set; }
     public bool IsPriority { get; private set; } = false;
+    public Price TotalPrice { get; private set; }
+
     private readonly List<Dish> _dishes = new();
     public List<Dish> Dishes => _dishes.ToList();
 
-    public static Result<Order> Create(Guid clientId, Guid menuId, Description? description)
+    public static Result<Order> Create(
+        Guid clientId, 
+        Guid menuId, 
+        Description? description,
+        List<Dish> dishes,
+        PricingService pricingService)
     {
-        var order = new Order(Guid.NewGuid(), menuId, clientId, DateTime.UtcNow, Status.Order, description);
+        var pricingDetails = pricingService.CalculatePrice(dishes);
+
+        var order = new Order(
+            Guid.NewGuid(), 
+            menuId, 
+            clientId, 
+            dishes,
+            DateTime.UtcNow, 
+            Status.Order, 
+            description, 
+            pricingDetails.TotalPrice);
 
         order.RaiseDomainEvent(new OrderCreatedDomainEvent(order.Id));
 

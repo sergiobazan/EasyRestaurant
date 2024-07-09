@@ -30,6 +30,7 @@ internal class ClientRepository : Repository<Client>, IClientRepository
                     .Select(o => new ClientOrderResponse(
                         o.Id,
                         o.ClientId,
+                        o.TotalPrice.Amount,
                         o.Date,
                         o.Status,
                         o.Dishes.Select(d => new ClientOrderDishes(
