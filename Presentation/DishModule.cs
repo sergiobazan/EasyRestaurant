@@ -7,11 +7,16 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Presentation;
 
-public class DishModule : ICarterModule
+public class DishModule : CarterModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public DishModule()
+        : base("api/dishes")
     {
-        app.MapPost("/dishes", async (CreateDishRequest request, ISender sender) =>
+        WithTags("Dishes");
+    }
+    public override void AddRoutes(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/", async (CreateDishRequest request, ISender sender) =>
         {
             var command = new CreateDishCommand(request);
             var result = await sender.Send(command);
@@ -21,7 +26,7 @@ public class DishModule : ICarterModule
                 return Results.BadRequest(result.Error);
             }
 
-            return Results.Created($"dishes/{result.Value}",result.Value);
+            return Results.Created($"api/dishes/{result.Value}", result.Value);
         });
     }
 }

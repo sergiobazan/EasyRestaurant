@@ -10,11 +10,17 @@ using Application.Clients.Login;
 
 namespace Presentation;
 
-public class ClientModule : ICarterModule
+public class ClientModule : CarterModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public ClientModule()
+        : base("api/clients")
     {
-        app.MapPost("/clients", async (CreateClientRequest request, ISender sender) =>
+        WithTags("Clients");
+    }
+
+    public override void AddRoutes(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/", async (CreateClientRequest request, ISender sender) =>
         {
             var command = new CreateClientCommand(request);
 
@@ -25,10 +31,10 @@ public class ClientModule : ICarterModule
                 return Results.BadRequest(result.Error);
             }
 
-            return Results.Ok(result.Value);
+            return Results.Created($"api/clients/{result.Value}", result.Value);
         });
 
-        app.MapPost("/clients/login", async (LoginClientRequest request, ISender sender) =>
+        app.MapPost("login", async (LoginClientRequest request, ISender sender) =>
         {
             var command = new LoginClientCommand(request.Email, request.Password);
 
@@ -42,7 +48,7 @@ public class ClientModule : ICarterModule
             return Results.Ok(result.Value);
         });
 
-        app.MapGet("/clients/{id:guid}", async (Guid id, ISender sender) =>
+        app.MapGet("{id:guid}", async (Guid id, ISender sender) =>
         {
             var query = new GetClientByIdQuery(id);
             var result = await sender.Send(query);
@@ -55,7 +61,7 @@ public class ClientModule : ICarterModule
             return Results.Ok(result.Value);
         }).RequireAuthorization();
 
-        app.MapGet("/clients/{id:guid}/orders", async (Guid id, ISender sender) =>
+        app.MapGet("{id:guid}/orders", async (Guid id, ISender sender) =>
         {
             var query = new GetClientOrdersQuery(id);
             var result = await sender.Send(query);

@@ -11,11 +11,16 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Presentation;
 
-public class OrderModule : ICarterModule
+public class OrderModule : CarterModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public OrderModule()
+        : base("api/orders")
     {
-        app.MapPost("/orders", async (CreateOrderRequest request, ISender sender) =>
+        WithTags("Orders");
+    }
+    public override void AddRoutes(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/", async (CreateOrderRequest request, ISender sender) =>
         {
             var command = new CreateOrderCommand(request.ClientId, request.MenuId, request.Description, request.DishIds);
             var result = await sender.Send(command);
@@ -25,10 +30,10 @@ public class OrderModule : ICarterModule
                 return Results.BadRequest(result.Error);
             }
 
-            return Results.Created($"orders/{result.Value}", result.Value);
+            return Results.Created($"api/orders/{result.Value}", result.Value);
         });
 
-        app.MapPost("/orders/{id:guid}/delivered", async (Guid id, ISender sender) =>
+        app.MapPost("{id:guid}/delivered", async (Guid id, ISender sender) =>
         {
             var command = new OrderDeliveredCommand(id);
             var result = await sender.Send(command);
@@ -41,7 +46,7 @@ public class OrderModule : ICarterModule
             return Results.Ok();
         });
 
-        app.MapPost("/orders/{id:guid}/canceled", async (Guid id, ISender sender) =>
+        app.MapPost("{id:guid}/canceled", async (Guid id, ISender sender) =>
         {
             var command = new OrderCanceledCommand(id);
             var result = await sender.Send(command);
@@ -54,7 +59,7 @@ public class OrderModule : ICarterModule
             return Results.Ok();
         });
 
-        app.MapPost("/orders/update", async (ChangeOrderRequest request, ISender sender) =>
+        app.MapPost("update", async (ChangeOrderRequest request, ISender sender) =>
         {
             var command = new ChangeOrderCommand(request);
             var result = await sender.Send(command);
@@ -67,7 +72,7 @@ public class OrderModule : ICarterModule
             return Results.Ok();
         });
 
-        app.MapPost("/orders/{id:guid}/priority", async (Guid id, ISender sender) =>
+        app.MapPost("{id:guid}/priority", async (Guid id, ISender sender) =>
         {
             var command = new ChangePriorityCommand(id);
             var result = await sender.Send(command);

@@ -8,19 +8,24 @@ using Microsoft.AspNetCore.Routing;
 
 namespace Presentation;
 
-public class MenuModule : ICarterModule
+public class MenuModule : CarterModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+    public MenuModule()
+        : base("api/menus")
     {
-        app.MapPost("menus", async (CreateMenuRequest request, ISender sender) =>
+        WithTags("Menu");
+    }
+    public override void AddRoutes(IEndpointRouteBuilder app)
+    {
+        app.MapPost("/", async (CreateMenuRequest request, ISender sender) =>
         {
             var command = new CreateMenuCommand(request);
             var result = await sender.Send(command);
 
-            return result.IsSuccess ? Results.Created($"menus/{result.Value}", result.Value) : Results.BadRequest(result.Error); 
+            return result.IsSuccess ? Results.Created($"api/menus/{result.Value}", result.Value) : Results.BadRequest(result.Error);
         });
 
-        app.MapGet("menus/{id:guid}/orders", async (Guid id, ISender sender) =>
+        app.MapGet("{id:guid}/orders", async (Guid id, ISender sender) =>
         {
             var command = new GetOrdersQuery(id);
             var result = await sender.Send(command);
