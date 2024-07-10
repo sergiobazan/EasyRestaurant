@@ -28,10 +28,10 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
         if (result.IsFailure)
         {
             _logger.LogError(
-            "Request Fail {@RequestName}, {@Error}, {@DateTimeUtc}",
-            typeof(TRequest).Name,
-            result.Error,
-            DateTime.UtcNow);
+                "Request Fail {@RequestName}, {@Error}, {@DateTimeUtc}",
+                typeof(TRequest).Name,
+                result.Error,
+                DateTime.UtcNow);
         }
 
         _logger.LogInformation(

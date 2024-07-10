@@ -4,8 +4,12 @@ using EasyRestaurant.API.Extentions;
 using EasyRestaurant.API.Middlewares;
 using Infraestructure;
 using Presentation;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,6 +31,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseSerilogRequestLogging();
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 

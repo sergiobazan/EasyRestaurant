@@ -7,11 +7,11 @@ services:
       context: .
       dockerfile: EasyRestaurant.API/Dockerfile
     depends_on:
-        - easyrestaurant.database
+        - easyrestaurant-database
 
-  easyrestaurant.database:
+  easyrestaurant-database:
     image: postgres:latest
-    container_name: easyrestaurant.database
+    container_name: Easyrestaurant.Database
     environment:
         - POSTGRES_DB=easyrestaurant
         - POSTGRES_USER=postgres
@@ -21,11 +21,20 @@ services:
     ports:
         - 5432:5432
 
-  easyrestaurant.cache:
+  easyrestaurant-cache:
     image: redis
-    container_name: easyrestaurant.cache
+    container_name: Easyrestaurant.Cache
     restart: always
     volumes:
         - ./.containers/easyrestaurant-cache:/data
     ports:
         - 6379:6379
+
+  easyreestaurant-seq:
+    image: datalust/seq:latest
+    container_name: Easyrestaurant.Seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80
